@@ -1,4 +1,4 @@
-# Vitestハンズオン
+# Vitest ハンズオン
 
 ## 👋 はじめに
 
@@ -6,10 +6,15 @@
 
 ## 🎯 対象
 
-- Vitestを利用したことがないフロントエンド開発者
-- Vue.js フレームワーク
+- Nuxt 3
 
-## 🚀 Vitestとは？
+## 🛠️ 前提条件
+
+- Node.js 23.11.0
+- pnpm 10.11.0
+- JavaScript/TypeScriptの基本的な知識
+
+## 🚀 Vitest (ヴィーテスト) とは？
 
 Vitestは、Viteをベースにした高速なJavaScript/TypeScriptのテストフレームワークです。以下の特徴があります：
 
@@ -20,7 +25,7 @@ Vitestは、Viteをベースにした高速なJavaScript/TypeScriptのテスト�
 - **TypeScript対応**: TypeScriptをそのままサポート
 - **スナップショットテスト**: UIコンポーネントのスナップショットテストに対応
 
-## 📋 ハンズオン内容
+## 📋 ハンズオン概要
 
 このハンズオンでは、以下の内容について実践的に学びます：
 
@@ -32,61 +37,9 @@ Vitestは、Viteをベースにした高速なJavaScript/TypeScriptのテスト�
 6. **カバレッジレポート**: コードカバレッジの計測方法
 7. **CIとの統合**: GitHub ActionsなどのCIでVitestを使用する方法
 
-## 🛠️ 前提条件
+## 📚 ハンズオン
 
-- Node.js 16.0.0以上
-- npm, yarn, pnpmのいずれか
-- JavaScript/TypeScriptの基本的な知識
-- Viteプロジェクトの基本的な知識（推奨）
-
-## 🚦 始め方
-
-```bash
-# リポジトリをクローン
-git clone https://github.com/yourusername/practice_vitest.git
-
-# ディレクトリに移動
-cd practice_vitest
-
-# 依存関係のインストール
-npm install
-# または
-yarn install
-# または
-pnpm install
-
-# テストの実行
-npm test
-# または
-yarn test
-# または
-pnpm test
-```
-
-## 📁 ディレクトリ構成
-
-```text
-practice_vitest/
-├── README.md
-├── package.json
-├── vite.config.ts
-├── src/
-│   ├── components/      # UIコンポーネント
-│   ├── utils/           # ユーティリティ関数
-│   └── main.ts          # エントリーポイント
-└── tests/
-    ├── components/      # コンポーネントテスト
-    ├── utils/           # ユーティリティ関数テスト
-    └── setup.ts         # テストセットアップファイル
-```
-
-## 📚 各ハンズオンの概要
-
-### 1. 基本セットアップ
-
-- Vitestのインストールと設定
-- `vite.config.ts`の設定
-- テスト実行コマンド
+### [1. 基本セットアップ](./handson/1_setup.md)
 
 ### 2. 基本的なテスト
 
