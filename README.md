@@ -39,13 +39,9 @@ Vitestは、Viteをベースにした高速なJavaScript/TypeScriptのテスト�
 
 ## 📚 ハンズオン
 
-### [1. 基本セットアップ](./handson/1_setup.md)
+### [1. セットアップ](./handson/1_setup.md)
 
-### 2. 基本的なテスト
-
-- テストスイートとテストケースの作成
-- アサーション（expect）の使い方
-- setup/teardownの設定
+### [2. 基本的なテスト](./handson/2_basic_test.md)
 
 ### 3. モック
 

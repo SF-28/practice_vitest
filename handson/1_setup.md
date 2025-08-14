@@ -1,4 +1,4 @@
-# 1. 基本セットアップ
+# 1. セットアップ
 
 このセクションでは、NuxtプロジェクトにVitestを導入する基本的な手順を説明します
 
@@ -59,7 +59,7 @@ export default defineConfig({
   plugins: [vue()],
   test: {
     // Vitestの基本設定
-    globals: true,        // describe, it, expect を都度インポートしなくても使えるように
+    globals: true,        // テスト用の関数を都度インポートしなくても使えるように
     environment: 'jsdom', // DOMテスト用の環境
   },
   resolve: {
@@ -75,27 +75,26 @@ export default defineConfig({
 
 ## 最初のテストを作成
 
-シンプルなテストファイルを作成します
+シンプルなテストを作成します
 
-1. `tests`ディレクトリを作成
-2. その中に `example.spec.ts` ファイルを作成
-3. 以下内容を入力
+1. `utils/sum.ts`を作成し、以下コピー＆ペースト
 
-```ts
-import { describe, it, expect } from 'vitest'
+    ```ts
+    export function sum(a: number, b: number): number {
+      return a + b;
+    }
+    ```
 
-describe('最初のテスト', () => {
-  it('trueはtrueであること', () => {
-    expect(true).toBe(true)
-  })
+2. `utils/sum.spec.ts` を作成し、以下コピー＆ペースト
 
-  it('1 + 1は2になること', () => {
-    expect(1 + 1).toBe(2)
-  })
-})
-```
+    ```ts
+    import { sum } from '@/utils/sum'; // テスト対象をインポートする
+    // import { expect, test } from 'vitest'; // vitest.config.ts で globals: false の場合はこの記述が必要になる
 
-テストコードについては後ほど解説します
+    test('足し算のテスト', () => {
+      expect(sum(1, 2)).toBe(3); // 1 + 2 が 3 になることを確認
+    });
+    ```
 
 ## テストを実行する
 
@@ -110,14 +109,14 @@ pnpm vitest
 ```sh
  DEV  v3.2.4 ~/practice_vitest/my-nuxt-app
 
- ✓ tests/example.spec.ts (2 tests) 3ms
-   ✓ 最初のテスト > trueはtrueであること 1ms
-   ✓ 最初のテスト > 1 + 1は2になること 0ms
+ ✓ utils/sum.spec.ts (1 test) 4ms
+   ✓ 足し算のテスト 2ms
 
  Test Files  1 passed (1)
-      Tests  2 passed (2)
-   Start at  14:31:55
-   Duration  2.16s (transform 87ms, setup 0ms, collect 38ms, tests 3ms, environment 1.09s, prepare 299ms)
+      Tests  1 passed (1)
+   Start at  16:43:08
+   Duration  2.33s (transform 68ms, setup 0ms, collect 57ms, tests 4ms, environment 1.28s, prepare 222ms)
+
 
  PASS  Waiting for file changes...
        press h to show help, press q to quit
@@ -143,10 +142,10 @@ pnpm vitest
 }
 ```
 
-これで、`pnpm test`コマンドでテストを実行できるようになります
+これで、`pnpm test` コマンドでテストを実行できるようになります
 
 ---
 
-以上で基本的なセットアップは完了です
+以上でセットアップは完了です
 
-次のセクションでは、Vitestを使った基本的なテスト方法について学びます
+[2. 基本的なテスト](./2_basic_test.md) に進みましょう
