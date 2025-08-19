@@ -7,5 +7,4 @@ applyTo: '**'
 以下を前提とします
 
 - Node.js 23.11.0
-- pnpm
 - Nuxt3
