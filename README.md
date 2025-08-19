@@ -43,11 +43,7 @@ Vitestは、Viteをベースにした高速なJavaScript/TypeScriptのテスト�
 
 ### [2. 基本的なテスト](./handson/2_basic_test.md)
 
-### 3. モック
-
-- 関数のモック
-- モジュールのモック
-- スパイの使い方
+### [3. モック](./handson/3_mock.md)
 
 ### 4. コンポーネントテスト
 
