@@ -44,11 +44,7 @@ Vitestは、Viteをベースにした高速なJavaScript/TypeScriptのテスト�
 
 ### [3. モック](./handson/3_mock.md)
 
-### 4. コンポーネントテスト
-
-- Vue Test Utilsとの統合
-<!-- - React Testing Libraryとの統合 -->
-<!-- - Svelte Testing Libraryとの統合 -->
+### [4. コンポーネントテスト](./handson/4_components_test.md)
 
 ### 5. スナップショットテスト
 
