@@ -330,7 +330,7 @@ pnpm test tests/nested-setup.spec.ts
 
 ```ts
 // ShoppingCart クラス
-class ShoppingCart {
+export default class ShoppingCart {
   items: string[] = [];
 
   addItem(item: string): void {
