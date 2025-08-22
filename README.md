@@ -50,10 +50,7 @@ Vitestは、Viteをベースにした高速なJavaScript/TypeScriptのテスト�
 
 ### [6. カバレッジ](handson/6_coverage.md)
 
-### 7. CIとの統合
-
-- GitHub Actionsの設定例
-<!-- - GitLab CIの設定例 -->
+### [7. CIとの統合](handson/7_ci_integration.md)
 
 ## 🔗 参考リソース
 
