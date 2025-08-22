@@ -48,10 +48,7 @@ Vitestは、Viteをベースにした高速なJavaScript/TypeScriptのテスト�
 
 ### [5. スナップショットテスト](./handson/5_snapshot_test.md)
 
-### 6. カバレッジレポート
-
-- カバレッジ設定
-- レポートの見方と活用法
+### [6. カバレッジ](handson/6_coverage.md)
 
 ### 7. CIとの統合
 
