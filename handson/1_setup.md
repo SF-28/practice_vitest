@@ -43,7 +43,7 @@ Do you approve? (y/N) y
 必要なパッケージをインストールします
 
 ```sh
-pnpm add -D vitest @vitejs/plugin-vue@latest jsdom
+pnpm add -D vitest @vitejs/plugin-vue@latest happy-dom
 ```
 
 ## Vitestの設定
@@ -60,7 +60,7 @@ export default defineConfig({
   test: {
     // Vitestの基本設定
     globals: true,        // テスト用の関数を都度インポートしなくても使えるように
-    environment: 'jsdom', // DOMテスト用の環境
+    environment: 'happy-dom', // DOMテスト用の環境
   },
   resolve: {
     alias: {

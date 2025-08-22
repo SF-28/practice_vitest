@@ -14,14 +14,14 @@
 
 ## テスト環境のセットアップ
 
-Vueコンポーネントをテストするには、ブラウザのような環境が必要です。Vitestではこれを `jsdom` を使用して実現しています。
+Vueコンポーネントをテストするには、ブラウザのような環境が必要です。今回は `happy-dom` を使用して実現しています。
 
 既に `vitest.config.ts` ファイルで環境が設定されています：
 
 ```ts
 test: {
   globals: true,
-  environment: 'jsdom', // DOMテスト用の環境
+  environment: 'happy-dom', // DOMテスト用の環境
 },
 ```
 
@@ -87,7 +87,7 @@ export function mount(component, options = {}) {
 }
 ```
 
-このヘルパー関数は、Vue Test Utilsが提供する標準の`mount`関数をラップしています。将来的にプラグインやグローバルコンポーネント、モックなどの共通設定を追加する際に、この関数を拡張するだけで済むようになります。
+このヘルパー関数は、Vue Test Utilsが提供する標準の `mount`関数をラップしています。将来的にプラグインやグローバルコンポーネント、モックなどの共通設定を追加する際に、この関数を拡張するだけで済むようになります。
 
 この関数を使うために、`@vue/test-utils` パッケージをインストールしましょう：
 
@@ -100,7 +100,6 @@ pnpm add -D @vue/test-utils
 `components/Counter.spec.ts` ファイルを作成して、カウンターコンポーネントをテストします：
 
 ```ts
-import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import Counter from '@/components/Counter.vue'
 
@@ -184,11 +183,12 @@ Vue.jsアプリケーションでは、コンポーネント間のデータの�
 ### プロパティとイベントのテストの重要性
 
 1. **プロパティ（Props）のテスト**:
+
    - 親コンポーネントから子コンポーネントへのデータ受け渡しが正しく行われるか確認
    - デフォルト値が期待通りに機能するか検証
    - 型チェックやバリデーションが想定通りに動作するか検証
-
 2. **イベント（Events）のテスト**:
+
    - 子コンポーネントから親コンポーネントへの通知が正しく行われるか確認
    - イベントが適切なタイミングで発火されるか検証
    - イベントに適切なデータが含まれているか検証
@@ -253,9 +253,8 @@ const submitForm = () => {
 次に、このコンポーネントをテストするファイル `components/UserForm.spec.ts` を作成します：
 
 ```ts
-import { describe, it, expect, vi } from 'vitest'
-import { mount } from '@vue/test-utils'
 import UserForm from '@/components/UserForm.vue'
+import { mount } from '@vue/test-utils'
 
 describe('UserForm.vue', () => {
   it('デフォルトのプレースホルダーが表示されること', () => {
@@ -310,6 +309,7 @@ describe('UserForm.vue', () => {
     })
   })
 })
+
 ```
 
 ### テスト内容の詳細解説
@@ -456,10 +456,9 @@ onMounted(fetchUsers)
 このコンポーネントをテストするファイル `components/UserList.spec.ts` を作成します：
 
 ```ts
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { mount } from '@vue/test-utils'
 import UserList from '@/components/UserList.vue'
 import { fetchUserData } from '@/utils/api'
+import { mount } from '@vue/test-utils'
 
 // APIのモック
 vi.mock('@/utils/api', () => ({
@@ -488,6 +487,7 @@ describe('UserList.vue', () => {
     await vi.waitFor(() => {
       return !wrapper.vm.loading
     })
+    await wrapper.vm.$nextTick() // DOM更新を待つ
 
     // ユーザーリストが表示されていることを確認
     const items = wrapper.findAll('[data-testid="user-item"]')
@@ -501,6 +501,7 @@ describe('UserList.vue', () => {
     fetchUserData.mockImplementation(() => new Promise(() => {}))
 
     const wrapper = mount(UserList)
+    await wrapper.vm.$nextTick() // DOM更新を待つ
 
     // ローディングメッセージが表示されていることを確認
     expect(wrapper.text()).toContain('読み込み中...')
@@ -516,6 +517,7 @@ describe('UserList.vue', () => {
     await vi.waitFor(() => {
       return !wrapper.vm.loading
     })
+    await wrapper.vm.$nextTick() // DOM更新を待つ
 
     // エラーメッセージが表示されていることを確認
     expect(wrapper.text()).toContain('エラーが発生しました')
@@ -531,6 +533,7 @@ describe('UserList.vue', () => {
 
     // 初回データ取得の完了を待つ
     await vi.waitFor(() => !wrapper.vm.loading)
+    await wrapper.vm.$nextTick() // DOM更新を待つ
 
     // モックを更新
     const updatedUsers = [
@@ -544,6 +547,7 @@ describe('UserList.vue', () => {
 
     // データ取得の完了を待つ
     await vi.waitFor(() => !wrapper.vm.loading)
+    await wrapper.vm.$nextTick() // DOM更新を待つ
 
     // APIが再度呼ばれたことを確認
     expect(fetchUserData).toHaveBeenCalledTimes(2)
@@ -554,6 +558,7 @@ describe('UserList.vue', () => {
     expect(items[0].text()).toContain('更新ユーザー1')
   })
 })
+
 ```
 
 ## コンポーザブルを使ったコンポーネントのテスト
@@ -605,53 +610,11 @@ const { count, increment, decrement, reset } = useCounter(10) // 初期値10で�
 このコンポーネントをテストするファイル `components/ComposableCounter.spec.ts` を作成します：
 
 ```ts
-import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import ComposableCounter from '@/components/ComposableCounter.vue'
-import { useCounter } from '@/composables/useCounter'
-
-// コンポーザブルのモック
-vi.mock('@/composables/useCounter', () => ({
-  useCounter: vi.fn()
-}))
 
 describe('ComposableCounter.vue', () => {
-  it('コンポーザブルが正しく使用されること', () => {
-    // モックの実装
-    const mockCount = { value: 10 }
-    const mockIncrement = vi.fn()
-    const mockDecrement = vi.fn()
-    const mockReset = vi.fn()
-
-    useCounter.mockReturnValue({
-      count: mockCount,
-      increment: mockIncrement,
-      decrement: mockDecrement,
-      reset: mockReset
-    })
-
-    // コンポーネントをマウント
-    const wrapper = mount(ComposableCounter)
-
-    // 初期値の検証
-    expect(wrapper.text()).toContain('カウント: 10')
-
-    // ボタンクリックのテスト
-    const buttons = wrapper.findAll('button')
-    buttons[0].trigger('click') // 増やす
-    expect(mockIncrement).toHaveBeenCalled()
-
-    buttons[1].trigger('click') // 減らす
-    expect(mockDecrement).toHaveBeenCalled()
-
-    buttons[2].trigger('click') // リセット
-    expect(mockReset).toHaveBeenCalled()
-  })
-
-  it('実際のコンポーザブルとの統合テスト', async () => {
-    // 実際のコンポーザブルを使用
-    vi.unmock('@/composables/useCounter')
-
+  it('コンポーザブルとの統合テスト', async () => {
     // コンポーネントをマウント
     const wrapper = mount(ComposableCounter)
 
@@ -675,7 +638,60 @@ describe('ComposableCounter.vue', () => {
 })
 ```
 
+mockを使うと、コンポーザブルの関数呼び出しを監視できます
 
+`components/ComposableCounter.mock.spec.ts`
+
+```ts
+import { mount } from '@vue/test-utils'
+import ComposableCounter from '@/components/ComposableCounter.vue'
+import { useCounter } from '@/composables/useCounter'
+
+// useCounter のモックを定義
+vi.mock('@/composables/useCounter')
+
+describe('ComposableCounter.vue', () => {
+  // モック用の関数を定義
+  const incrementMock = vi.fn()
+  const decrementMock = vi.fn()
+  const resetMock = vi.fn()
+
+  beforeEach(() => {
+    // 各テストの前にモックの状態をクリア
+    vi.clearAllMocks()
+
+    // useCounterがモックされた値を返すように設定
+    // as は型推論を補助するために使用
+    vi.mocked(useCounter).mockReturnValue({
+      count: 10,
+      increment: incrementMock,
+      decrement: decrementMock,
+      reset: resetMock,
+    })
+  })
+
+  it('コンポーザブルが正しく使用されること', () => {
+    // コンポーネントをマウント
+    const wrapper = mount(ComposableCounter)
+
+    // 初期値の検証
+    expect(wrapper.text()).toContain('カウント: 10')
+    expect(useCounter).toHaveBeenCalled() // useCounterが呼び出されたことを確認
+
+    // ボタンクリックのテスト
+    const buttons = wrapper.findAll('button')
+
+    buttons[0].trigger('click') // 増やす
+    expect(incrementMock).toHaveBeenCalled()
+
+    buttons[1].trigger('click') // 減らす
+    expect(decrementMock).toHaveBeenCalled()
+
+    buttons[2].trigger('click') // リセット
+    expect(resetMock).toHaveBeenCalled()
+  })
+})
+```
 
 ## まとめ
 
@@ -691,3 +707,4 @@ describe('ComposableCounter.vue', () => {
 これらの技術を組み合わせることで、Vueアプリケーションの品質と信頼性を高めることができます。コンポーネントテストは、ユニットテストとE2Eテストの中間に位置し、開発速度と信頼性のバランスがとれたテスト戦略を実現します。
 
 次のステップとして、さらに複雑なコンポーネントや、Vuexストアとの連携、ルーティングを含むコンポーネントのテストに進むことができます。
+z
