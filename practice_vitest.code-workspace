@@ -1,0 +1,13 @@
+{
+  "folders": [
+	{
+		"path": "."
+	},
+	{
+		"path": "my-nuxt-app"
+	}
+],
+  "settings": {
+    "typescript.tsdk": "my-nuxt-app/node_modules/typescript/lib"
+  }
+}

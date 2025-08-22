@@ -44,26 +44,13 @@ Vitestは、Viteをベースにした高速なJavaScript/TypeScriptのテスト�
 
 ### [3. モック](./handson/3_mock.md)
 
-### 4. コンポーネントテスト
+### [4. コンポーネントテスト](./handson/4_components_test.md)
 
-- Vue Test Utilsとの統合
-<!-- - React Testing Libraryとの統合 -->
-<!-- - Svelte Testing Libraryとの統合 -->
+### [5. スナップショットテスト](./handson/5_snapshot_test.md)
 
-### 5. スナップショットテスト
+### [6. カバレッジ](handson/6_coverage.md)
 
-- スナップショットの作成と更新
-- インラインスナップショットの使い方
-
-### 6. カバレッジレポート
-
-- カバレッジ設定
-- レポートの見方と活用法
-
-### 7. CIとの統合
-
-- GitHub Actionsの設定例
-<!-- - GitLab CIの設定例 -->
+### [7. CIとの統合](handson/7_ci_integration.md)
 
 ## 🔗 参考リソース
 

@@ -77,7 +77,6 @@ export function calculate(a: number, b: number, operation: (x: number, y: number
 
 ```ts
 import { add, calculate } from '@/utils/calculator';
-import { vi } from 'vitest';
 
 describe('関数のモック', () => {
   test('モック関数が呼び出されることを検証', () => {
@@ -151,7 +150,7 @@ pnpm test utils/calculator.spec.ts
 const mockOperation = vi.fn();
 ```
 
-これだけで、呼び出しを追跡できる関数が作成されます。初期状態では`undefined`を返します。
+これだけで、呼び出しを追跡できる関数が作成されます。初期状態では `undefined`を返します。
 
 **呼び出し検証**：
 
@@ -227,7 +226,7 @@ export function processData(data: string, logFn: (msg: string) => void): string 
 
 ## モジュールのモック (vi.mock)
 
-関数単体をモックするだけでなく、モジュール全体（ファイル全体のエクスポート）をモックすることもできます。Vitestでは`vi.mock()`を使用して、これを実現できます。
+関数単体をモックするだけでなく、モジュール全体（ファイル全体のエクスポート）をモックすることもできます。Vitestでは `vi.mock()`を使用して、これを実現できます。`vi.mock` は**すべてのインポートより優先的に実行されます。**
 
 ### なぜモジュールをモックするのか
 
@@ -252,140 +251,18 @@ export function processData(data: string, logFn: (msg: string) => void): string 
 `utils/api.ts`を作成しましょう：
 
 ```ts
+export const API_VERSION = '1.0';
+export const BASE_URL = 'https://api.example.com';
+
 export async function fetchUserData(userId: string) {
   // 実際のAPIコールを想定
-  const response = await fetch(`https://api.example.com/users/${userId}`);
+  const response = await fetch(`${BASE_URL}/v${API_VERSION}/users/${userId}`);
   if (!response.ok) {
     throw new Error('Failed to fetch user data');
   }
   return await response.json();
 }
-
-export async function updateUserData(userId: string, data: any) {
-  // 実際のAPIコールを想定
-  const response = await fetch(`https://api.example.com/users/${userId}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  });
-  if (!response.ok) {
-    throw new Error('Failed to update user data');
-  }
-  return await response.json();
-}
 ```
-
-次に、`utils/api.spec.ts`を作成してテストします：
-
-```ts
-import { fetchUserData, updateUserData } from '@/utils/api';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
-
-// モジュール全体をモック
-vi.mock('@/utils/api', () => {
-  return {
-    fetchUserData: vi.fn(),
-    updateUserData: vi.fn(),
-  };
-});
-
-describe('APIモジュールのモック', () => {
-  beforeEach(() => {
-    // 各テスト前にモックをリセット
-    vi.resetAllMocks();
-  });
-
-  it('fetchUserDataのモック', async () => {
-    // モック関数の戻り値を設定
-    const mockUser = { id: '123', name: 'テストユーザー' };
-    (fetchUserData as any).mockResolvedValue(mockUser);
-
-    // モック関数の呼び出し
-    const result = await fetchUserData('123');
-
-    // 検証
-    expect(fetchUserData).toHaveBeenCalledWith('123');
-    expect(result).toEqual(mockUser);
-  });
-
-  it('updateUserDataのモック', async () => {
-    // モック関数の戻り値を設定
-    const updatedUser = { id: '123', name: '更新済みユーザー' };
-    (updateUserData as any).mockResolvedValue(updatedUser);
-
-    // モック関数の呼び出し
-    const userData = { name: '更新済みユーザー' };
-    const result = await updateUserData('123', userData);
-
-    // 検証
-    expect(updateUserData).toHaveBeenCalledWith('123', userData);
-    expect(result).toEqual(updatedUser);
-  });
-
-  it('fetchUserDataの例外をモック', async () => {
-    // モック関数がエラーをスローするよう設定
-    (fetchUserData as any).mockRejectedValue(new Error('API error'));
-
-    // エラーが発生することを検証
-    await expect(fetchUserData('123')).rejects.toThrow('API error');
-  });
-});
-```
-
-```sh
-pnpm test utils/api.spec.ts
-```
-
-#### モジュールモックのポイント解説
-
-このテストコードでは、以下の重要なテクニックを使用しています：
-
-**モジュール全体のモック化**:
-
-```ts
-vi.mock('@/utils/api', () => {
-  return {
-    fetchUserData: vi.fn(),
-    updateUserData: vi.fn(),
-  };
-});
-```
-
-この記述で、`@/utils/api`モジュールから実際にインポートする代わりに、指定したモック実装を使用します。本物のAPIにアクセスすることなくテストが可能になります。
-
-**モックのリセット**:
-
-```ts
-beforeEach(() => {
-  // 各テスト前にモックをリセット
-  vi.resetAllMocks();
-});
-```
-
-各テストケース間での干渉を防ぐため、テスト実行前にモックの状態をリセットします。
-
-**非同期モックの設定**:
-
-```ts
-const mockUser = { id: '123', name: 'テストユーザー' };
-(fetchUserData as any).mockResolvedValue(mockUser);
-```
-
-`mockResolvedValue`メソッドを使って、非同期関数のモックが解決する値を設定しています。これは`Promise.resolve()`で値を返すモック関数を作成します。
-
-**エラーのモック**:
-
-```ts
-(fetchUserData as any).mockRejectedValue(new Error('API error'));
-```
-
-`mockRejectedValue`メソッドを使って、失敗するPromiseを返すようにモックしています。エラー処理のテストに役立ちます。
-
-### 自動モックの実装置き換え
-
-モジュール内の特定の関数の実装だけを置き換えることもできます。
 
 `utils/user-service.ts`を作成します：
 
@@ -405,14 +282,18 @@ export function formatUserName(user: { firstName: string; lastName: string }): s
 次に、`utils/user-service.spec.ts`を作成してテストします：
 
 ```ts
+import { getUserFullName } from '@/utils/user-service';
 import { getUserFullName, formatUserName } from '@/utils/user-service';
-import { fetchUserData } from '@/utils/api';
-import { vi, describe, it, expect } from 'vitest';
 
 // api.ts モジュールをモック
 vi.mock('@/utils/api');
 
 describe('UserService', () => {
+  beforeEach(() => {
+    // 各テスト前にモックをリセット
+    vi.resetAllMocks();
+  });
+
   it('getUserFullNameが正しい名前を返すこと', async () => {
     // fetchUserDataのモック実装
     (fetchUserData as any).mockResolvedValue({
@@ -436,6 +317,58 @@ describe('UserService', () => {
 });
 ```
 
+#### モジュールモックのポイント解説
+
+このテストコードでは、以下の重要なテクニックを使用しています：
+
+**モジュール全体のモック化**:
+
+```ts
+vi.mock('@/utils/api');
+```
+
+この記述で、`@/utils/api`モジュールから実際にインポートする代わりに、指定したモック実装を使用します。本物のAPIにアクセスすることなくテストが可能になります。
+
+- モジュールでexportされている関数は全て`vi.fn()` で置き換えられます。
+- プリミティブ値やオブジェクトは保持されます
+  - これらも初期化or除外したい場合は、以下のように宣言します
+
+    ```ts
+    vi.mock('@/utils/api', () => {
+      return {
+        VERSION: '1.0.0',       // プリミティブ値
+        config: { timeout: 3000 } // オブジェクト
+        fetchUserData: vi.fn(),
+      };
+    });
+    ```
+
+**モックのリセット**:
+
+```ts
+beforeEach(() => {
+  // 各テスト前にモックをリセット
+  vi.resetAllMocks();
+});
+```
+
+各テストケース間での干渉を防ぐため、テスト実行前にモックの状態をリセットします。基本的に入れるようにしましょう。
+
+**非同期モックの設定**:
+
+```ts
+(fetchUserData as any).mockResolvedValue({
+  firstName: '太郎',
+  lastName: '山田'
+});
+```
+
+`mockResolvedValue`メソッドを使って、非同期関数のモックが解決する値を設定しています。これは `Promise.resolve()`で値を返すモック関数を作成します。
+
+### モックの注意点
+
+**同じファイル内の他のメソッドから呼び出されるメソッドをモックすることはできません。このようなケースでは依存性を注入して疎結合にするリファクタリングが推奨されます。**
+
 ## スパイ (vi.spyOn)
 
 `vi.spyOn`は既存のオブジェクトのメソッドを監視（スパイ）し、その呼び出しを追跡するために使用します。元の実装を置き換えることなく監視できるのが特徴です。
@@ -445,14 +378,15 @@ describe('UserService', () => {
 スパイとモックの主な違いは以下の通りです：
 
 1. **デフォルトの動作**:
+
    - スパイ: 元の実装をそのまま実行し、呼び出し情報だけを記録
    - モック: 元の実装を置き換え、指定した戻り値や代替実装を使用
-
 2. **対象**:
+
    - スパイ: 既存のオブジェクトのメソッドやプロパティに設定
    - モック: 関数やモジュール全体を新たに作成または置き換え
-
 3. **使用場面**:
+
    - スパイ: 元の実装を維持したまま呼び出し情報を確認したい場合
    - モック: 元の実装を完全に置き換えたい場合
 
@@ -460,78 +394,18 @@ describe('UserService', () => {
 
 スパイは以下のような場面で特に便利です：
 
-1. **副作用の監視**: `console.log`や`localStorage.setItem`などの呼び出しを検証
+1. **副作用の監視**:`console.log`や`localStorage.setItem`などの呼び出しを検証
 2. **既存コードの非破壊的テスト**: 本番コードを変更せずに、呼び出し状況を監視
 3. **オブジェクト指向設計のテスト**: クラスのメソッドが正しく他のメソッドを呼び出しているか確認
 4. **一部の振る舞いだけを変更**: 元の実装はほぼそのままに、一部だけ変更したい場合
 
-### オブジェクトメソッドの監視
-
-`utils/math-utils.ts`を作成しましょう：
-
-```ts
-export const MathUtils = {
-  add(a: number, b: number): number {
-    return a + b;
-  },
-
-  multiply(a: number, b: number): number {
-    return a * b;
-  },
-
-  calculateArea(radius: number): number {
-    return this.multiply(Math.PI, this.multiply(radius, radius));
-  }
-};
-```
-
-次に、`utils/math-utils.spec.ts`を作成してテストします：
-
-```ts
-import { MathUtils } from '@/utils/math-utils';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
-
-describe('MathUtils スパイ', () => {
-  beforeEach(() => {
-    // スパイをリセット
-    vi.restoreAllMocks();
-  });
-
-  it('メソッド呼び出しを監視', () => {
-    // multiplyメソッドにスパイを仕掛ける
-    const multiplySpy = vi.spyOn(MathUtils, 'multiply');
-
-    // メソッドを呼び出す
-    MathUtils.calculateArea(5);
-
-    // 検証（元の実装が実行される）
-    expect(multiplySpy).toHaveBeenCalledTimes(2);
-    expect(multiplySpy).toHaveBeenNthCalledWith(2, 5, 5);
-  });
-
-  it('メソッドの実装を置き換える', () => {
-    // multiplyメソッドをモックに置き換える
-    const multiplySpy = vi.spyOn(MathUtils, 'multiply').mockImplementation(() => 100);
-
-    // 置き換えられたメソッドを呼び出す
-    const result = MathUtils.calculateArea(5);
-
-    // 検証
-    expect(multiplySpy).toHaveBeenCalledTimes(2);
-    expect(result).toBe(100); // 常に100を返すようにモックしたため
-  });
-});
-```
-
 ### 組み込みオブジェクトのスパイ
 
-JavaScriptの組み込みオブジェクト（例：console、Date、Math）にもスパイを仕掛けることができます。
+JavaScriptの組み込みオブジェクト（例：console、Date、Math）にスパイを仕掛けることができます。
 
 `utils/date-utils.spec.ts`を作成しましょう：
 
 ```ts
-import { vi, describe, it, expect, beforeEach } from 'vitest';
-
 describe('組み込みオブジェクトのスパイ', () => {
   beforeEach(() => {
     // 各テスト前にスパイをリセット
@@ -570,37 +444,21 @@ describe('組み込みオブジェクトのスパイ', () => {
 });
 ```
 
-### 練習問題 2: スパイの使用
+### スパイの適用範囲についての注意点
 
-`utils/storage.ts`を作成してください：
+`vi.spyOn`はオブジェクトのメソッド（プロパティとして存在する関数）に対してのみ使用でき、独立した関数には直接適用できません。これは、`vi.spyOn`の構文が「オブジェクト」と「そのプロパティ名」を必要とするためです：
 
-```ts
-export class Storage {
-  private data: Record<string, any> = {};
-
-  save(key: string, value: any): void {
-    this.data[key] = value;
-    console.log(`データを保存: ${key}`);
-  }
-
-  get(key: string): any {
-    console.log(`データを取得: ${key}`);
-    return this.data[key];
-  }
-
-  remove(key: string): void {
-    console.log(`データを削除: ${key}`);
-    delete this.data[key];
-  }
-}
-
-export const storage = new Storage();
+```javascript
+vi.spyOn(オブジェクト, 'メソッド名');
 ```
 
-次に、`utils/storage.spec.ts`を作成し、以下のテストを実装してください：
+独立した関数をスパイする場合は、以下の方法があります
 
-1. `console.log`をスパイして、各メソッドが適切なログメッセージを出力することを検証
-2. `storage.get`メソッドをスパイして、特定の値を返すように置き換える
+```typescript
+import * as utils from '@/utils';
+
+const spy = vi.spyOn(utils, 'add');
+```
 
 ## まとめ
 
@@ -609,16 +467,17 @@ export const storage = new Storage();
 ### 3種類のモックアプローチとその特徴
 
 1. **`vi.fn()` - 関数のモック**
+
    - 単一関数のモック化
    - 呼び出し追跡、戻り値設定、実装置き換えが可能
    - 依存性注入されたコールバックのテストに最適
-
 2. **`vi.mock()` - モジュールのモック**
+
    - モジュール全体（ファイル全体のエクスポート）のモック化
    - インポート文をそのままにして、内部実装を置き換え
    - 外部APIやデータベースアクセスなどの隔離に最適
-
 3. **`vi.spyOn()` - スパイ**
+
    - オブジェクトのメソッドを非破壊的に監視
    - 元の実装を維持したまま呼び出し情報を収集
    - 必要に応じて一時的に実装を置き換え可能
@@ -626,7 +485,7 @@ export const storage = new Storage();
 ### モック使用のベストプラクティス
 
 - **必要最小限のモック**: テスト対象の境界となる部分だけをモック化し、内部実装は実際のコードを使う
-- **テスト前のリセット**: `beforeEach`で`vi.resetAllMocks()`を呼び、テスト間の独立性を保つ
+- **テスト前のリセット**:`beforeEach`で`vi.resetAllMocks()`を呼び、テスト間の独立性を保つ
 - **明確な検証**: 何を検証したいのかを明確にし、それに関連するアサーションだけを書く
 - **実際の動作に近づける**: モックの動作は、可能な限り実際のコンポーネントの動作に近づける
 
@@ -638,5 +497,3 @@ export const storage = new Storage();
 - **テストの安定性**: 外部環境の影響を受けないため、再現性が高い
 - **エッジケースのテスト**: 通常発生しにくい状況（エラーなど）も容易に再現可能
 - **コンポーネント単位のテスト**: 大きなシステムの一部だけを分離してテスト可能
-
-次のセクションでは、これらのモック技術をさらに活用して、Vue.jsコンポーネントのテストに応用する方法を学びます。Vueコンポーネントのテストでは、プロップス、イベント、Vuexストア、ルーターなどのモックが必要になるケースが多く、今回学んだ技術が大いに役立ちます。

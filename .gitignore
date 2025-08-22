@@ -1,5 +1,7 @@
 # User Settings
 my-nuxt-app
+.tmp.driveupload
+.tmp.drivedownload
 
 # Created by https://www.toptal.com/developers/gitignore/api/macos,windows,linux,node,vue,vuejs,nuxtjs,react,svelte
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,windows,linux,node,vue,vuejs,nuxtjs,react,svelte
