@@ -46,10 +46,7 @@ Vitestは、Viteをベースにした高速なJavaScript/TypeScriptのテスト�
 
 ### [4. コンポーネントテスト](./handson/4_components_test.md)
 
-### 5. スナップショットテスト
-
-- スナップショットの作成と更新
-- インラインスナップショットの使い方
+### [5. スナップショットテスト](./handson/5_snapshot_test.md)
 
 ### 6. カバレッジレポート
 
