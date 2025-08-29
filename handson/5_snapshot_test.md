@@ -72,7 +72,6 @@ touch my-nuxt-app/components/Greeting.spec.ts
 `Greeting.spec.ts` に以下のコードを追加します：
 
 ```typescript
-import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import Greeting from './Greeting.vue'
 
@@ -214,7 +213,6 @@ touch my-nuxt-app/components/Greeting.inline.spec.ts
 `Greeting.inline.spec.ts` に以下のコードを追加します：
 
 ```typescript
-import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import Greeting from './Greeting.vue'
 
@@ -248,7 +246,6 @@ pnpm vitest run components/Greeting.inline.spec.ts
 テストファイルが自動的に更新され、以下のようになります：
 
 ```typescript
-import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import Greeting from './Greeting.vue'
 
@@ -297,7 +294,6 @@ touch my-nuxt-app/components/Greeting.partial.spec.ts
 `Greeting.partial.spec.ts` に以下のコードを追加します：
 
 ```typescript
-import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import Greeting from './Greeting.vue'
 
